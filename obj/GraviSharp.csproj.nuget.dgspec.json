@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\disrct\\Desktop\\GraviSharp\\GraviSharp.csproj": {}
+    "c:\\Users\\disrct\\Desktop\\GraviSharp\\GraviSharp.csproj": {}
   },
   "projects": {
-    "C:\\Users\\disrct\\Desktop\\GraviSharp\\GraviSharp.csproj": {
+    "c:\\Users\\disrct\\Desktop\\3dSharp\\3dSharp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\disrct\\Desktop\\GraviSharp\\GraviSharp.csproj",
-        "projectName": "GraviSharp",
-        "projectPath": "C:\\Users\\disrct\\Desktop\\GraviSharp\\GraviSharp.csproj",
+        "projectUniqueName": "c:\\Users\\disrct\\Desktop\\3dSharp\\3dSharp.csproj",
+        "projectName": "3dSharp",
+        "projectPath": "c:\\Users\\disrct\\Desktop\\3dSharp\\3dSharp.csproj",
         "packagesPath": "C:\\Users\\disrct\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\disrct\\Desktop\\GraviSharp\\obj\\",
+        "outputPath": "c:\\Users\\disrct\\Desktop\\3dSharp\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\disrct\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -28,6 +28,65 @@
           "net7.0": {
             "targetAlias": "net7.0",
             "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net7.0": {
+          "targetAlias": "net7.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.102\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "c:\\Users\\disrct\\Desktop\\GraviSharp\\GraviSharp.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "c:\\Users\\disrct\\Desktop\\GraviSharp\\GraviSharp.csproj",
+        "projectName": "GraviSharp",
+        "projectPath": "c:\\Users\\disrct\\Desktop\\GraviSharp\\GraviSharp.csproj",
+        "packagesPath": "C:\\Users\\disrct\\.nuget\\packages\\",
+        "outputPath": "c:\\Users\\disrct\\Desktop\\GraviSharp\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\disrct\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net7.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net7.0": {
+            "targetAlias": "net7.0",
+            "projectReferences": {
+              "c:\\Users\\disrct\\Desktop\\3dSharp\\3dSharp.csproj": {
+                "projectPath": "c:\\Users\\disrct\\Desktop\\3dSharp\\3dSharp.csproj"
+              }
+            }
           }
         },
         "warningProperties": {
