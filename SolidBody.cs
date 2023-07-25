@@ -54,7 +54,7 @@ public class SolidBody
 
     public Vector AddAirResistance()
     {
-
+        
         return acceleration;
     }
 
