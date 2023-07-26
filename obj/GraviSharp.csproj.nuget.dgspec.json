@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "c:\\Users\\disrct\\Desktop\\GraviSharp\\GraviSharp.csproj": {}
+    "C:\\Users\\disrct\\Desktop\\GraviSharp\\GraviSharp.csproj": {}
   },
   "projects": {
-    "c:\\Users\\disrct\\Desktop\\3dSharp\\3dSharp.csproj": {
+    "C:\\Users\\disrct\\Desktop\\3dSharp\\3dSharp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Users\\disrct\\Desktop\\3dSharp\\3dSharp.csproj",
+        "projectUniqueName": "C:\\Users\\disrct\\Desktop\\3dSharp\\3dSharp.csproj",
         "projectName": "3dSharp",
-        "projectPath": "c:\\Users\\disrct\\Desktop\\3dSharp\\3dSharp.csproj",
+        "projectPath": "C:\\Users\\disrct\\Desktop\\3dSharp\\3dSharp.csproj",
         "packagesPath": "C:\\Users\\disrct\\.nuget\\packages\\",
-        "outputPath": "c:\\Users\\disrct\\Desktop\\3dSharp\\obj\\",
+        "outputPath": "C:\\Users\\disrct\\Desktop\\3dSharp\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\disrct\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -59,14 +59,14 @@
         }
       }
     },
-    "c:\\Users\\disrct\\Desktop\\GraviSharp\\GraviSharp.csproj": {
+    "C:\\Users\\disrct\\Desktop\\GraviSharp\\GraviSharp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Users\\disrct\\Desktop\\GraviSharp\\GraviSharp.csproj",
+        "projectUniqueName": "C:\\Users\\disrct\\Desktop\\GraviSharp\\GraviSharp.csproj",
         "projectName": "GraviSharp",
-        "projectPath": "c:\\Users\\disrct\\Desktop\\GraviSharp\\GraviSharp.csproj",
+        "projectPath": "C:\\Users\\disrct\\Desktop\\GraviSharp\\GraviSharp.csproj",
         "packagesPath": "C:\\Users\\disrct\\.nuget\\packages\\",
-        "outputPath": "c:\\Users\\disrct\\Desktop\\GraviSharp\\obj\\",
+        "outputPath": "C:\\Users\\disrct\\Desktop\\GraviSharp\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\disrct\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -83,8 +83,8 @@
           "net7.0": {
             "targetAlias": "net7.0",
             "projectReferences": {
-              "c:\\Users\\disrct\\Desktop\\3dSharp\\3dSharp.csproj": {
-                "projectPath": "c:\\Users\\disrct\\Desktop\\3dSharp\\3dSharp.csproj"
+              "C:\\Users\\disrct\\Desktop\\3dSharp\\3dSharp.csproj": {
+                "projectPath": "C:\\Users\\disrct\\Desktop\\3dSharp\\3dSharp.csproj"
               }
             }
           }

@@ -13,9 +13,13 @@ public class Vector
         this.Z = Z;
     }
 
-    // public Vector Add(Vector vector)
-    // {
+    public Vector Add(Vector vector)
+    {
+        X += vector.X;
+        Y += vector.Y;
+        Z += vector.Z;
 
-    // }
+        return this;
+    }
 
 }

@@ -1,0 +1,36 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v7.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v7.0": {
+      "GraviSharp/1.0.0": {
+        "dependencies": {
+          "3dSharp": "1.0.0"
+        },
+        "runtime": {
+          "GraviSharp.dll": {}
+        }
+      },
+      "3dSharp/1.0.0": {
+        "runtime": {
+          "3dSharp.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "GraviSharp/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "3dSharp/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
