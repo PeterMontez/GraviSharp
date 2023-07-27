@@ -14,11 +14,11 @@ public class SolidBody
     public Angle Angle { get; set; }
     public bool Colision { get; set; }
     public bool Gravity { get; set; }
-    
+
     public SolidBody(Point3d position, bool colision, bool gravity, Vector? speed = null, Vector? acceleration = null, Angle? angle = null)
     {
-        Speed  = speed == null ? new Vector(0, 0, 0) : speed;
-        Acceleration = acceleration == null ? new Vector(0, -9.8*100, 0) : acceleration;
+        Speed = speed == null ? new Vector(0, 0, 0) : speed;
+        Acceleration = acceleration == null ? new Vector(0, (gravity ? -9.8 * 100 : 0), 0) : acceleration;
         Angle = angle == null ? new Angle(0, 0, 0) : angle;
         Colision = colision;
         Gravity = gravity;
@@ -31,6 +31,7 @@ public class SolidBody
         double ElapsedTime = (DateTime.Now - Time).TotalSeconds;
         Time = DateTime.Now;
 
+        Acceleration.Set(0, 0, 0);
         if (Gravity) AddGravity(ElapsedTime);
         Move(moves, moveParams);
         UpdateSpeed(ElapsedTime);
@@ -70,9 +71,9 @@ public class SolidBody
     {
         Vector crr = new Vector(force, 0, 0);
 
-        Angle hRotation = new Angle(0,0,Angle.pitch);
+        Angle hRotation = new Angle(0, 0, Angle.pitch);
 
-        double X = AMath.DgCos(hRotation.roll) * AMath.DgCos(hRotation.yaw) * crr.X + 
+        double X = AMath.DgCos(hRotation.roll) * AMath.DgCos(hRotation.yaw) * crr.X +
         (-AMath.DgSin(hRotation.roll)) * crr.Y +
         AMath.DgCos(hRotation.roll) * AMath.DgSin(hRotation.yaw) * crr.Z;
 
@@ -86,9 +87,9 @@ public class SolidBody
 
         crr = new Vector(X, Y, Z);
 
-        Angle vRotation = new Angle(Angle.yaw,0,0);
+        Angle vRotation = new Angle(Angle.yaw, 0, 0);
 
-        X = AMath.DgCos(vRotation.roll) * AMath.DgCos(vRotation.yaw) * crr.X + 
+        X = AMath.DgCos(vRotation.roll) * AMath.DgCos(vRotation.yaw) * crr.X +
         (-AMath.DgSin(vRotation.roll)) * crr.Y +
         AMath.DgCos(vRotation.roll) * AMath.DgSin(vRotation.yaw) * crr.Z;
 
@@ -107,14 +108,14 @@ public class SolidBody
 
     public void AddGravity(double ElapsedTime)
     {
-        AddForce(new Vector(0, -9.8*100*ElapsedTime, 0));
+        AddForce(new Vector(0, -9.8 * 100 * ElapsedTime, 0));
     }
 
     public Vector AddAirResistance()
     {
-        double hAngle = AMath.RadToDeg(Math.Atan(Speed.Z/Speed.X));
-        double hSpeed = Math.Sqrt((Speed.Z*Speed.Z) + (Speed.X*Speed.X));
-        double vAngle = AMath.RadToDeg(Math.Atan(Speed.Y/hSpeed));
+        double hAngle = AMath.RadToDeg(Math.Atan(Speed.Z / Speed.X));
+        double hSpeed = Math.Sqrt((Speed.Z * Speed.Z) + (Speed.X * Speed.X));
+        double vAngle = AMath.RadToDeg(Math.Atan(Speed.Y / hSpeed));
 
         double hRelativeAngle = hAngle - Angle.yaw;
         double vRelativeAngle = vAngle - Angle.pitch;
@@ -149,26 +150,144 @@ public class SolidBody
             {
                 case 0: if (moves[i]) Thrust(moveParams[0]); break;
                 case 1: if (moves[i]) Thrust(-moveParams[0]); break;
-                case 2: if (moves[i]) Angle.YawAdd(moveParams[1]); break;
-                case 3: if (moves[i]) Angle.YawAdd(-moveParams[1]); break;
-                case 4: if (moves[i]) Angle.PitchAdd(moveParams[2]); break;
-                case 5: if (moves[i]) Angle.PitchAdd(-moveParams[2]); break;
+                case 2: if (moves[i]) YawCorrection(moveParams[1]); break;
+                case 3: if (moves[i]) YawCorrection(-moveParams[1]); break;
+                case 4: if (moves[i]) PitchCorrection(moveParams[2]); break;
+                case 5: if (moves[i]) PitchCorrection(-moveParams[2]); break;
                 case 6: if (moves[i]) Angle.RollAdd(moveParams[3]); break;
                 case 7: if (moves[i]) Angle.RollAdd(-moveParams[3]); break;
-                
+
                 default: break;
             }
         }
     }
 
-    // public Angle PitchCorrection(double value)
-    // {
+    public void PitchCorrection(double value)
+    {
+        if (Angle.roll == 0)
+        {
+            Angle.PitchAdd(value);
+            return;
+        }
 
-    // }
+        if (Angle.roll < 90)
+        {
+            double Vcomponent = AMath.DgCos(Angle.roll) * value;
+            Angle.PitchAdd(Vcomponent);
+            Angle.YawAdd(-(value - Vcomponent));
+            return;
+        }
+
+        if (Angle.roll == 90)
+        {
+            Angle.YawAdd(-value);
+            return;
+        }
+
+        if (Angle.roll < 180)
+        {
+            double Vcomponent = AMath.DgCos(Angle.roll) * value;
+            Angle.PitchAdd(Vcomponent);
+            Angle.YawAdd(-(value + Vcomponent));
+            return;
+        }
+
+        if (Angle.roll == 180)
+        {
+            Angle.PitchAdd(-value);
+            return;
+        }
+
+        if (Angle.roll < 270)
+        {
+            double Vcomponent = AMath.DgCos(Angle.roll) * value;
+            Angle.PitchAdd(Vcomponent);
+            Angle.YawAdd((value + Vcomponent));
+            return;
+        }
+
+        if (Angle.roll == 270)
+        {
+            Angle.YawAdd(value);
+            return;
+        }
+
+        if (Angle.roll < 360)
+        {
+            double Vcomponent = AMath.DgCos(Angle.roll) * value;
+            Angle.PitchAdd(Vcomponent);
+            Angle.YawAdd((value - Vcomponent));
+            return;
+        }
+
+        // double Vcomponent = AMath.DgCos(Angle.roll) * value;
+
+        // Angle.PitchAdd(Vcomponent);
+        // Angle.YawAdd(value - Vcomponent);
+    }
+
+    public void YawCorrection(double value)
+    {
+        if (Angle.roll == 0)
+        {
+            Angle.YawAdd(value);
+            return;
+        }
+
+        if (Angle.roll < 90)
+        {
+            double Hcomponent = AMath.DgCos(Angle.roll) * value;
+            Angle.YawAdd(Hcomponent);
+            Angle.PitchAdd(-(value - Hcomponent));
+            return;
+        }
+
+        if (Angle.roll == 90)
+        {
+            Angle.PitchAdd(-value);
+            return;
+        }
+
+        if (Angle.roll < 180)
+        {
+            double Hcomponent = AMath.DgCos(Angle.roll) * value;
+            Angle.YawAdd(Hcomponent);
+            Angle.PitchAdd(-(value + Hcomponent));
+            return;
+        }
+
+        if (Angle.roll == 180)
+        {
+            Angle.YawAdd(-value);
+            return;
+        }
+
+        if (Angle.roll < 270)
+        {
+            double Hcomponent = AMath.DgCos(Angle.roll) * value;
+            Angle.YawAdd(Hcomponent);
+            Angle.PitchAdd(value + Hcomponent);
+            return;
+        }
+
+        if (Angle.roll == 270)
+        {
+            Angle.PitchAdd(value);
+            return;
+        }
+
+        if (Angle.roll < 360)
+        {
+            double Hcomponent = AMath.DgCos(Angle.roll) * value;
+            Angle.YawAdd(Hcomponent);
+            Angle.PitchAdd(-(value - Hcomponent);
+            return;
+        }
+    }
 
     public double GetAirSpeed(Vector speed)
     {
-        return Math.Sqrt((speed.X*speed.X) + (speed.Y*speed.Y) + (speed.Z*speed.Z));
+        return Math.Sqrt((speed.X * speed.X) + (speed.Y * speed.Y) + (speed.Z * speed.Z));
     }
 
 }

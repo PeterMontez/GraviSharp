@@ -22,6 +22,13 @@ public class Vector
         return this;
     }
 
+    public void Set(double X, double Y, double Z)
+    {
+        this.X = X;
+        this.Y = Y;
+        this.Z = Z;
+    }
+
     public override string ToString()
     {
         return $"{X}, {Y}, {Z}";
