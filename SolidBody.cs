@@ -7,9 +7,9 @@ public class SolidBody
     public double Mass { get; set; }
     public Point3d Position { get; set; }
     public Vector Speed { get; set; }
-    public double TotalSpeed { get; set; }
+    public double AirSpeed { get; set; }
     public Vector Acceleration { get; set; }
-    public Vector AirResistance { get; set; }
+    // public Vector AirResistance { get; set; }
     public DateTime Time { get; set; }
     public Angle Angle { get; set; }
     public bool Colision { get; set; }
@@ -21,25 +21,35 @@ public class SolidBody
         Angle = angle == null ? new Angle(0, 0, 0) : angle;
         Colision = colision;
         Position = position;
+        Time = DateTime.Now;
     }
 
-    public Point3d UpdatePosition()
+    public void Update(bool[] moves, double[] moveParams)
     {
-        Position.X = Position.X + Speed.X;
-        Position.Y = Position.Y + Speed.Y;
-        Position.Z = Position.Z + Speed.Z;
+        double ElapsedTime = (DateTime.Now - Time).TotalSeconds;
+        Time = DateTime.Now;
+
+        Move(moves, moveParams);
+        UpdateSpeed(ElapsedTime);
+        UpdatePosition(ElapsedTime);
+    }
+
+    public Point3d UpdatePosition(double ElapsedTime)
+    {
+        Position.X = Position.X + Speed.X * ElapsedTime;
+        Position.Y = Position.Y + Speed.Y * ElapsedTime;
+        Position.Z = Position.Z + Speed.Z * ElapsedTime;
 
         return Position;
     }
 
-    public Vector UpdateSpeed()
+    public Vector UpdateSpeed(double ElapsedTime)
     {
-        double timePassed = (DateTime.Now - Time).TotalSeconds;
-        Time = DateTime.Now;
+        Speed.X += Acceleration.X * ElapsedTime;
+        Speed.Y += Acceleration.Y * ElapsedTime;
+        Speed.Z += Acceleration.Z * ElapsedTime;
 
-        Speed.X += Acceleration.X * timePassed;
-        Speed.Y += Acceleration.Y * timePassed;
-        Speed.Z += Acceleration.Z * timePassed;
+        AirSpeed = GetAirSpeed(Speed);
 
         return Speed;
     }
@@ -53,25 +63,99 @@ public class SolidBody
         return Acceleration;
     }
 
+    public void Thrust(double force)
+    {
+        Vector crr = new Vector(force, 0, 0);
+
+        Angle hRotation = new Angle(0,0,Angle.pitch);
+
+        double X = AMath.DgCos(hRotation.roll) * AMath.DgCos(hRotation.yaw) * crr.X + 
+        (-AMath.DgSin(hRotation.roll)) * crr.Y +
+        AMath.DgCos(hRotation.roll) * AMath.DgSin(hRotation.yaw) * crr.Z;
+
+        double Y = (AMath.DgCos(hRotation.pitch) * AMath.DgSin(hRotation.roll) * AMath.DgCos(hRotation.yaw) + AMath.DgSin(hRotation.pitch) * AMath.DgSin(hRotation.yaw)) * crr.X +
+        AMath.DgCos(hRotation.pitch) * AMath.DgCos(hRotation.roll) * crr.Y +
+        (AMath.DgCos(hRotation.pitch) * AMath.DgSin(hRotation.roll) * AMath.DgSin(hRotation.yaw) - AMath.DgSin(hRotation.pitch) * AMath.DgCos(hRotation.yaw)) * crr.Z;
+
+        double Z = (AMath.DgSin(hRotation.pitch) * AMath.DgSin(hRotation.roll) * AMath.DgCos(hRotation.yaw) + AMath.DgCos(hRotation.pitch) * AMath.DgSin(hRotation.yaw)) * crr.X +
+        AMath.DgSin(hRotation.pitch) * AMath.DgCos(hRotation.roll) * crr.Y +
+        (AMath.DgSin(hRotation.pitch) * AMath.DgSin(hRotation.roll) * AMath.DgSin(hRotation.yaw) - AMath.DgCos(hRotation.pitch) * AMath.DgCos(hRotation.yaw)) * crr.Z;
+
+        crr = new Vector(X, Y, Z);
+
+        Angle vRotation = new Angle(Angle.yaw,0,0);
+
+        X = AMath.DgCos(vRotation.roll) * AMath.DgCos(vRotation.yaw) * crr.X + 
+        (-AMath.DgSin(vRotation.roll)) * crr.Y +
+        AMath.DgCos(vRotation.roll) * AMath.DgSin(vRotation.yaw) * crr.Z;
+
+        Y = (AMath.DgCos(vRotation.pitch) * AMath.DgSin(vRotation.roll) * AMath.DgCos(vRotation.yaw) + AMath.DgSin(vRotation.pitch) * AMath.DgSin(vRotation.yaw)) * crr.X +
+        AMath.DgCos(vRotation.pitch) * AMath.DgCos(vRotation.roll) * crr.Y +
+        (AMath.DgCos(vRotation.pitch) * AMath.DgSin(vRotation.roll) * AMath.DgSin(vRotation.yaw) - AMath.DgSin(vRotation.pitch) * AMath.DgCos(vRotation.yaw)) * crr.Z;
+
+        Z = (AMath.DgSin(vRotation.pitch) * AMath.DgSin(vRotation.roll) * AMath.DgCos(vRotation.yaw) + AMath.DgCos(vRotation.pitch) * AMath.DgSin(vRotation.yaw)) * crr.X +
+        AMath.DgSin(vRotation.pitch) * AMath.DgCos(vRotation.roll) * crr.Y +
+        (AMath.DgSin(vRotation.pitch) * AMath.DgSin(vRotation.roll) * AMath.DgSin(vRotation.yaw) - AMath.DgCos(vRotation.pitch) * AMath.DgCos(vRotation.yaw)) * crr.Z;
+
+        crr = new Vector(X, Y, Z);
+
+        AddForce(new Vector(X, Y, Z));
+    }
+
     public Vector AddAirResistance()
     {
         double hAngle = AMath.RadToDeg(Math.Atan(Speed.Z/Speed.X));
         double hSpeed = Math.Sqrt((Speed.Z*Speed.Z) + (Speed.X*Speed.X));
         double vAngle = AMath.RadToDeg(Math.Atan(Speed.Y/hSpeed));
 
-        double hRelativeAngle = Angle.yaw - hAngle;
-        double vRelativeAngle = Angle.pitch - vAngle;
+        double hRelativeAngle = hAngle - Angle.yaw;
+        double vRelativeAngle = vAngle - Angle.pitch;
 
-        double hDrag = 
-        double vDrag =
+        // double hDrag = 
+        // double vDrag = 
+
+        // -------------------- VERTICAL RESISTANCE --------------------
+
+        double Vcomponent = AirSpeed * AMath.DgTan(vRelativeAngle);
+        double Hratio = AirSpeed / (AirSpeed + Vcomponent);
+        double Vratio = 1 - Hratio;
+
+        // -------------------------------------------------------------
+
+
 
         double[] xRes = new double[3];
         double[] yRes = new double[3];
         double[] zRes = new double[3];
 
-        xRes[0] = 
+        // xRes[0] = 
 
         return Acceleration;
+    }
+
+    public void Move(bool[] moves, double[] moveParams)
+    {
+        for (int i = 0; i < moves.Length; i++)
+        {
+            switch (i)
+            {
+                case 0: if (moves[i]) Thrust(moveParams[0]); break;
+                case 1: if (moves[i]) Thrust(-moveParams[0]); break;
+                case 2: if (moves[i]) Angle.YawAdd(moveParams[1]); break;
+                case 3: if (moves[i]) Angle.YawAdd(-moveParams[1]); break;
+                case 4: if (moves[i]) Angle.PitchAdd(moveParams[2]); break;
+                case 5: if (moves[i]) Angle.PitchAdd(-moveParams[2]); break;
+                case 6: if (moves[i]) Angle.RollAdd(moveParams[3]); break;
+                case 7: if (moves[i]) Angle.RollAdd(-moveParams[3]); break;
+                
+                default: break;
+            }
+        }
+    }
+
+    public double GetAirSpeed(Vector speed)
+    {
+        return Math.Sqrt((speed.X*speed.X) + (speed.Y*speed.Y) + (speed.Z*speed.Z));
     }
 
 }
