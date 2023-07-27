@@ -280,7 +280,7 @@ public class SolidBody
         {
             double Hcomponent = AMath.DgCos(Angle.roll) * value;
             Angle.YawAdd(Hcomponent);
-            Angle.PitchAdd(-(value - Hcomponent);
+            Angle.PitchAdd(-(value - Hcomponent));
             return;
         }
     }
