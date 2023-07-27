@@ -4,7 +4,7 @@ using _3dSharp;
 
 public class SolidBody
 {
-    public double Mass { get; set; }
+    public double Mass { get; set; } = 1;
     public Point3d Position { get; set; }
     public Vector Speed { get; set; }
     public double AirSpeed { get; set; }
@@ -13,13 +13,15 @@ public class SolidBody
     public DateTime Time { get; set; }
     public Angle Angle { get; set; }
     public bool Colision { get; set; }
+    public bool Gravity { get; set; }
     
-    public SolidBody(Point3d position, bool colision, Vector? speed = null, Vector? acceleration = null, Angle? angle = null)
+    public SolidBody(Point3d position, bool colision, bool gravity, Vector? speed = null, Vector? acceleration = null, Angle? angle = null)
     {
         Speed  = speed == null ? new Vector(0, 0, 0) : speed;
-        Acceleration = acceleration == null ? new Vector(0, -9.8, 0) : acceleration;
+        Acceleration = acceleration == null ? new Vector(0, -9.8*100, 0) : acceleration;
         Angle = angle == null ? new Angle(0, 0, 0) : angle;
         Colision = colision;
+        Gravity = gravity;
         Position = position;
         Time = DateTime.Now;
     }
@@ -29,6 +31,7 @@ public class SolidBody
         double ElapsedTime = (DateTime.Now - Time).TotalSeconds;
         Time = DateTime.Now;
 
+        if (Gravity) AddGravity(ElapsedTime);
         Move(moves, moveParams);
         UpdateSpeed(ElapsedTime);
         UpdatePosition(ElapsedTime);
@@ -102,6 +105,11 @@ public class SolidBody
         AddForce(new Vector(X, Y, Z));
     }
 
+    public void AddGravity(double ElapsedTime)
+    {
+        AddForce(new Vector(0, -9.8*100*ElapsedTime, 0));
+    }
+
     public Vector AddAirResistance()
     {
         double hAngle = AMath.RadToDeg(Math.Atan(Speed.Z/Speed.X));
@@ -152,6 +160,11 @@ public class SolidBody
             }
         }
     }
+
+    // public Angle PitchCorrection(double value)
+    // {
+
+    // }
 
     public double GetAirSpeed(Vector speed)
     {
