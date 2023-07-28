@@ -32,7 +32,8 @@ public class SolidBody
         Time = DateTime.Now;
 
         Acceleration.Set(0, 0, 0);
-        if (Gravity) AddGravity(ElapsedTime);
+        AddAirResistance();
+        AddGravity(ElapsedTime);
         Move(moves, moveParams);
         UpdateSpeed(ElapsedTime);
         UpdatePosition(ElapsedTime);
@@ -60,9 +61,9 @@ public class SolidBody
 
     public Vector AddForce(Vector vector)
     {
-        Acceleration.X = vector.X / Mass;
-        Acceleration.Y = vector.Y / Mass;
-        Acceleration.Z = vector.Z / Mass;
+        Acceleration.X += vector.X / Mass;
+        Acceleration.Y += vector.Y / Mass;
+        Acceleration.Z += vector.Z / Mass;
 
         return Acceleration;
     }
@@ -138,6 +139,19 @@ public class SolidBody
         double[] zRes = new double[3];
 
         // xRes[0] = 
+
+        double VAirRes = 0.0005;
+        double HAirRes = 0.002;
+
+        double X = Speed.X * Speed.X * HAirRes;
+        double Y = Speed.Y * Speed.Y * VAirRes;
+        double Z = Speed.Z * Speed.Z * HAirRes;
+
+        X = Speed.X < 0 ? X : -X;
+        Y = Speed.Y < 0 ? Y : -Y;
+        Z = Speed.Z < 0 ? Z : -Z;
+
+        AddForce(new Vector(X, Y, Z));
 
         return Acceleration;
     }
